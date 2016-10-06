@@ -1,5 +1,5 @@
 try {
-	$ModuleManifest = Test-ModuleManifest $PSScriptRoot\*.psd1
+	$ModuleManifest = Test-ModuleManifest $PSScriptRoot\..\*.psd1
 	Get-Module $ModuleManifest.Name | % {
 		$_.ExportedTypeFiles | % {
 			Remove-TypeData -Path $_
