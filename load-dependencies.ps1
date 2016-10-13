@@ -1,5 +1,6 @@
 try {
 	$ModuleManifest = Test-ModuleManifest $PSScriptRoot\..\*.psd1
+	Write-Verbose 'Unloading typedata'
 	Get-Module $ModuleManifest.Name | % {
 		$_.ExportedTypeFiles | % {
 			Remove-TypeData -Path $_
@@ -17,8 +18,8 @@ try {
 				#nuget:Microsoft.Exchange.WebServices/2.2#nuget.org
 				$Destination = Join-Path $RequiredPackage.Destination "$PackageName.$Version"
 				if (-not (Test-Path $Destination)) {
-					Write-Verbose "Installing package $PackageName version $Version from source $Source"
-					Install-Package -ProviderName $ProviderName -Name $PackageName -RequiredVersion $Version -Source $Source -Destination $_.Destination
+					Write-Warning "Installing package $PackageName version $Version from source $Source"
+					Install-Package -ProviderName $ProviderName -Name $PackageName -RequiredVersion $Version -Source $Source -Destination $RequiredPackage.Destination
 				}
 				Write-Verbose 'Loading assemblies'
 				$RequiredPackage.RequiredAssemblies | % {
@@ -31,7 +32,7 @@ try {
 				#gitlab:Networking/1.2.0#Intermedia
 				$Module = Get-Module -Name $PackageName -ListAvailable | ? Version -eq $Version
 				if (-not $Module) {
-					Write-Verbose "Installing module $PackageName version $Version from source $Source"
+					Write-Warning "Installing module $PackageName version $Version from source $Source"
 					Import-PackageProvider $ProviderName
 					switch ($ProviderName) {
 						powershellget {
@@ -50,7 +51,7 @@ try {
 				# until Chocolatey provider did not go GA
 				$Package = choco list $PackageName --local-only
 				if (-not $Package -match [regex]::Escape($PackageName)) {
-					Write-Verbose "Installing package $PackageName version $Version from source $Source"
+					Write-Warning "Installing package $PackageName version $Version from source $Source"
 					choco install -y $PackageName
 				}
 				$Destination = $RequiredPackage.Destination
