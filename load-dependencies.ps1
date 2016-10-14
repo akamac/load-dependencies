@@ -19,6 +19,7 @@ try {
 				$Destination = Join-Path $RequiredPackage.Destination "$PackageName.$Version"
 				if (-not (Test-Path $Destination)) {
 					Write-Warning "Installing package $PackageName version $Version from source $Source"
+					# how to skip dependencies?
 					Install-Package -ProviderName $ProviderName -Name $PackageName -RequiredVersion $Version -Source $Source -Destination $RequiredPackage.Destination
 				}
 				Write-Verbose 'Loading assemblies'
@@ -43,8 +44,8 @@ try {
 							Install-Package -ProviderName $ProviderName -Credential $Credential -Name $PackageName -RequiredVersion $Version -Source $Source
 						}
 					}
-					Import-Module -Name $PackageName -RequiredVersion $Version -WarningAction SilentlyContinue -ea Stop
 				}
+				Import-Module -Name $PackageName -RequiredVersion $Version -WarningAction SilentlyContinue -ea Stop
 			}
 			'chocolatey' {
 				#chocolatey:OpenSSL.Light/1.1.0.20160926#
