@@ -51,9 +51,9 @@ try {
 				#chocolatey:OpenSSL.Light/1.1.0.20160926#
 				# until Chocolatey provider did not go GA
 				$Package = choco list $PackageName --local-only
-				if (-not $Package -match [regex]::Escape($PackageName)) {
+				if (-not ($Package -eq "$PackageName $Version")) {
 					Write-Warning "Installing package $PackageName version $Version from source $Source"
-					choco install -y $PackageName
+					choco install -y $PackageName --version $Version
 				}
 				$Destination = $RequiredPackage.Destination
 				#$Package = Get-Package -Name $PackageName -RequiredVersion $Version -ProviderName $ProviderName
